@@ -9,6 +9,7 @@ package gui;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import negocio.Archivos;
 import negocio.Empresa;
@@ -19,14 +20,13 @@ import negocio.Empresa;
  */
 public class Principal extends javax.swing.JFrame {
 
-    ArrayList<Empresa> empresas;
     /**
      * Creates new form Principal
      */
     public Principal() {
-        empresas = Archivos.cargarArchivo();
-        if(empresas == null)
-            empresas = new ArrayList<>();
+        Archivos.cargarArchivo();
+        if(Archivos.empresas == null)
+            Archivos.empresas = new ArrayList<>();
         initComponents();
         loadEmpresas();
         
@@ -74,6 +74,11 @@ public class Principal extends javax.swing.JFrame {
         jLabel1.setText("Empresas");
 
         jButton2.setText("Entrar");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
 
         jButton3.setText("Borrar Empresa");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -123,19 +128,44 @@ public class Principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        CrearEmpresa crearEmpresa = new CrearEmpresa(empresas, this);
+        CrearEmpresa crearEmpresa = new CrearEmpresa(this);
         crearEmpresa.setDefaultCloseOperation(HIDE_ON_CLOSE);
         crearEmpresa.setVisible(true);
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        int index = empresas_list.getSelectedIndex();
+        if(index == -1){
+            JOptionPane.showMessageDialog(this, "Ninguna Empresa Seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
+        }else{
+            String nombre = (String) empresas_list.getModel().getElementAt(index);
+            String message = ("Borrar empresa " + nombre + "?") ;
+            int reply = JOptionPane.showConfirmDialog(null, message  , "Borrar", JOptionPane.YES_OPTION);
+            if(reply == JOptionPane.YES_OPTION){
+                Archivos.empresas.remove(index);
+                loadEmpresas();
+                Archivos.guardarArchivo();
+            }
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        ListModel listmodel = empresas_list.getModel();
+        String empresaSelected = (String) listmodel.getElementAt(empresas_list.getSelectedIndex());
+        
+        for(Empresa e : Archivos.empresas){
+            if(e.getNombre().equals(empresaSelected)){
+                ActivosEmpresa frame = new ActivosEmpresa(e);
+                frame.setDefaultCloseOperation(HIDE_ON_CLOSE);
+                frame.setVisible(true);
+            }
+        }
+    }//GEN-LAST:event_jButton2MouseClicked
+
     public void loadEmpresas(){
-        Object[] obs = new Object[empresas.size()];
+        Object[] obs = new Object[Archivos.empresas.size()];
         int i = 0;
-        for(Empresa e : empresas){
+        for(Empresa e : Archivos.empresas){
              obs[i++] = e.getNombre();
         }
         empresas_list.setListData(obs);

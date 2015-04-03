@@ -22,10 +22,18 @@ import java.util.logging.Logger;
  * @author alfredo
  */
 public class Archivos {
+
+    public Archivos() {
+    }
+    
     
     private static String nombreArchivo = "Seguridad";
+    public static ArrayList<Empresa> empresas = null;
     
     public static void guardarArchivo(ArrayList<Empresa> empresas){
+        if(Archivos.empresas == null)
+            Archivos.empresas = empresas;
+                
         FileOutputStream fout = null;
         ObjectOutputStream out = null;
         try {
@@ -44,13 +52,36 @@ public class Archivos {
                 Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
             }
          } 
-}
+        }
+    }
+    
+    public static void guardarArchivo(){
+                
+        FileOutputStream fout = null;
+        ObjectOutputStream out = null;
+        try {
+            fout = new FileOutputStream(nombreArchivo);
+            out = new ObjectOutputStream(fout);
+            out.writeObject(empresas);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+        if(out  != null){
+            try {
+                out.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+         } 
+        }
     }
     
     public static ArrayList<Empresa> cargarArchivo(){
         ObjectInputStream objectinputstream = null;
         FileInputStream streamIn = null;
-        ArrayList<Empresa> empresas = new ArrayList<>();
+        Archivos.empresas = new ArrayList<>();
         File f = new File(nombreArchivo);
         if(!f.exists()) return null;
         try {
@@ -69,7 +100,9 @@ public class Archivos {
                 Logger.getLogger(Archivos.class.getName()).log(Level.SEVERE, null, ex);
             }
          } 
- }
-        return empresas;
+       }
+        return Archivos.empresas;
     }
+    
+
 }

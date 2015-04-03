@@ -9,6 +9,7 @@ package gui;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import negocio.Archivos;
 import negocio.Empresa;
 
 /**
@@ -17,14 +18,12 @@ import negocio.Empresa;
  */
 public class CrearEmpresa extends javax.swing.JFrame {
 
-    private ArrayList<Empresa> empresas;
     private Principal parent;
     /**
      * Creates new form CrearEmpresa
      */
-    public CrearEmpresa(ArrayList<Empresa> empresas, Principal parent) {
+    public CrearEmpresa( Principal parent) {
         initComponents();
-        this.empresas = empresas;
         this.parent = parent;
     }
 
@@ -98,15 +97,16 @@ public class CrearEmpresa extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Por favor ingrese el nombre de la empresa", "Error", JOptionPane.ERROR_MESSAGE);
             correct = false;
         }
-        for(Empresa e : empresas){
+        for(Empresa e : Archivos.empresas){
             if(e.getNombre().equals(nombre_tf.getText())){
                 JOptionPane.showMessageDialog(this, "El nombre de la empresa ya existe", "Error", JOptionPane.ERROR_MESSAGE);
                 correct = false;
             }
         }
         if(correct){
-            empresas.add(new Empresa(nombre_tf.getText()));
+            Archivos.empresas.add(new Empresa(nombre_tf.getText()));
             parent.loadEmpresas();
+            Archivos.guardarArchivo(Archivos.empresas);
             this.dispose();
         }
         

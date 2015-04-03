@@ -33,6 +33,11 @@ public class Activo implements Serializable{
         this.tipos = tipos;
     }
     
+    public Activo() {
+        this.nombre = "";
+        this.tipos = new ArrayList<>();
+    }
+     
     public String getNombre() {
         return nombre;
     }
@@ -49,6 +54,9 @@ public class Activo implements Serializable{
         this.tipos = tipos;
     }
     
+    public void addTipo(TipoActivo nuevo){
+        tipos.add(nuevo);
+    }
     
     
 }
